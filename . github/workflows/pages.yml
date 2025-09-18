@@ -1,0 +1,55 @@
+name: Build and Deploy Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Generate index.html
+        run: |
+          echo '<!DOCTYPE html>' > index.html
+          echo '<html lang="ru"><head><meta charset="UTF-8">' >> index.html
+          echo '<title>Список страниц</title>' >> index.html
+          echo '<style>body{font-family:sans-serif;max-width:700px;margin:2em auto;}h1{color:#2c3e50;}ul{line-height:1.6;}</style>' >> index.html
+          echo '</head><body><h1>📂 Доступные страницы</h1><ul>' >> index.html
+
+          for f in *.html; do
+            if [ "$f" != "index.html" ]; then
+              TITLE=$(grep -oPm1 '(?<=<title>)[^<]+' "$f" || echo "$f")
+              echo "<li><a href=\"$f\">$TITLE</a></li>" >> index.html
+            fi
+          done
+
+          echo '</ul></body></html>' >> index.html
+
+      - name: Commit index.html
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add index.html
+          git commit -m "Автообновление index.html" || echo "No changes"
+          git push
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
