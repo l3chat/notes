@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Велосипеды: камеры и покрышки</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #2c3e50;
+      --border: #ccc;
+      --accent: #2980b9;
+      --highlight-bg: #f0f0f0;
+      --box-bg: #f9f9f9;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1e1e1e;
+        --text: #e0e0e0;
+        --border: #555;
+        --accent: #4aa3ff;
+        --highlight-bg: #2b2b2b;
+        --box-bg: #2a2a2a;
+      }
+    }
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 1em;
+      max-width: 800px;
+      background: var(--bg);
+      color: var(--text);
+    }
+    h1, h2, h3 {
+      text-align: center;
+      color: var(--accent);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1em 0;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.6em;
+      text-align: left;
+    }
+    th {
+      background: var(--highlight-bg);
+    }
+    .highlight {
+      font-weight: bold;
+      color: var(--accent);
+    }
+    .box {
+      border: 2px dashed var(--accent);
+      padding: 0.8em;
+      margin: 1em 0;
+      background: var(--box-bg);
+      text-align: center;
+      font-size: 1.1em;
+    }
+  </style>
+</head>
+<body>
+  <h1>🚲 Шпаргалка: камеры и покрышки</h1>
+
+  <h2>Велосипед №1 (городской, 700C / 28")</h2>
+  <table>
+    <tr><th>Покрышки</th><td><span class="highlight">40-622</span> / 700×38C / 28×1.50</td></tr>
+    <tr><th>Допустимые варианты</th><td>37–42-622 (700×35–42C)</td></tr>
+    <tr><th>Камеры</th><td>700×35–43C (37–43-622)</td></tr>
+    <tr><th>Ниппель</th><td>Schrader (AV)</td></tr>
+  </table>
+
+  <h3>Топ-3 покрышки</h3>
+  <ul>
+    <li>Schwalbe Marathon Plus 700×38C (~35–45 €)</li>
+    <li>Continental Contact Plus (~25–35 €)</li>
+    <li>BTWIN Long Distance 700×38C (~20 €)</li>
+  </ul>
+
+  <h3>Топ-3 камеры</h3>
+  <ul>
+    <li>Schwalbe AV17 (~6–8 €)</li>
+    <li>Continental Tour 28 All (~7–9 €)</li>
+    <li>BTWIN 700×35/45 AV (~5 €)</li>
+  </ul>
+
+  <h2>Велосипед №2 (MTB, 26")</h2>
+  <table>
+    <tr><th>Покрышки</th><td><span class="highlight">54-559</span> / 26×2.0</td></tr>
+    <tr><th>Допустимые варианты</th><td>50–57-559 (26×1.95–2.25)</td></tr>
+    <tr><th>Камеры</th><td>26×1.9–2.3 (47–57-559)</td></tr>
+    <tr><th>Ниппель</th><td>Schrader (AV)</td></tr>
+  </table>
+
+  <h3>Топ-3 покрышки</h3>
+  <ul>
+    <li>Schwalbe Smart Sam 26×2.1 (~20–25 €)</li>
+    <li>Continental Double Fighter III 26×2.0 (~22–28 €)</li>
+    <li>BTWIN All Terrain 26×2.0 (~15–18 €)</li>
+  </ul>
+
+  <h3>Топ-3 камеры</h3>
+  <ul>
+    <li>Schwalbe AV13 (~6–8 €)</li>
+    <li>Continental MTB 26 All (~7–9 €)</li>
+    <li>BTWIN 26×1.7/2.2 AV (~5 €)</li>
+  </ul>
+
+  <h2>📌 Быстрая шпаргалка</h2>
+  <div class="box">
+    Вело 1: <b>40-622</b> (700×38C), камеры 700×35–43C AV<br>
+    Вело 2: <b>54-559</b> (26×2.0), камеры 26×1.9–2.3 AV
+  </div>
+</body>
+</html>
