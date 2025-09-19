@@ -1,0 +1,67 @@
+name: Build and Deploy Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install pandoc
+        run: sudo apt-get install -y pandoc
+
+      - name: Convert Markdown to HTML
+        run: |
+          mkdir -p html
+          for f in *.md; do
+            [ -f "$f" ] || continue
+            out="html/${f%.md}.html"
+            pandoc "$f" -o "$out" --standalone --metadata title="${f%.md}"
+          done
+
+      - name: Generate index.html
+        run: |
+          echo '<!DOCTYPE html>' > html/index.html
+          echo '<html lang="ru"><head><meta charset="UTF-8">' >> html/index.html
+          echo '<title>Список страниц</title>' >> html/index.html
+          echo '<style>body{font-family:sans-serif;max-width:700px;margin:2em auto;}h1{color:#2c3e50;}ul{line-height:1.6;}</style>' >> html/index.html
+          echo '</head><body><h1>📂 Доступные страницы</h1><ul>' >> html/index.html
+
+          for f in html/*.html; do
+            if [ "$(basename "$f")" != "index.html" ]; then
+              TITLE=$(grep -oPm1 '(?<=<title>)[^<]+' "$f" || basename "$f")
+              echo "<li><a href=\"$(basename "$f")\">$TITLE</a></li>" >> html/index.html
+            fi
+          done
+
+          echo '</ul></body></html>' >> html/index.html
+
+      - name: Commit generated HTML
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add html/
+          git commit -m "Автогенерация HTML из Markdown" || echo "No changes"
+          git push
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./html
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
