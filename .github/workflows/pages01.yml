@@ -20,38 +20,49 @@ jobs:
       - name: Install pandoc
         run: sudo apt-get install -y pandoc
 
+      - name: Prepare folders
+        run: |
+          mkdir -p converted public
+
       - name: Convert Markdown to HTML
         run: |
-          mkdir -p html
           for f in *.md; do
             [ -f "$f" ] || continue
-            out="html/${f%.md}.html"
-            pandoc "$f" -o "$out" --standalone --metadata title="${f%.md}"
+            TITLE=$(grep -m1 '^# ' "$f" | sed 's/^# //')
+            [ -z "$TITLE" ] && TITLE="${f%.md}"
+            out="converted/${f%.md}.html"
+            pandoc "$f" -o "$out" --standalone --metadata title="$TITLE"
           done
+
+      - name: Copy static HTML files
+        run: cp -r *.html public/ || echo "No static HTML files"
+
+      - name: Copy converted Markdown
+        run: cp -r converted/*.html public/ || echo "No converted Markdown files"
 
       - name: Generate index.html
         run: |
-          echo '<!DOCTYPE html>' > html/index.html
-          echo '<html lang="ru"><head><meta charset="UTF-8">' >> html/index.html
-          echo '<title>Список страниц</title>' >> html/index.html
-          echo '<style>body{font-family:sans-serif;max-width:700px;margin:2em auto;}h1{color:#2c3e50;}ul{line-height:1.6;}</style>' >> html/index.html
-          echo '</head><body><h1>📂 Доступные страницы</h1><ul>' >> html/index.html
+          echo '<!DOCTYPE html>' > public/index.html
+          echo '<html lang="ru"><head><meta charset="UTF-8">' >> public/index.html
+          echo '<title>Список страниц</title>' >> public/index.html
+          echo '<style>body{font-family:sans-serif;max-width:700px;margin:2em auto;}h1{color:#2c3e50;}ul{line-height:1.6;}</style>' >> public/index.html
+          echo '</head><body><h1>📂 Доступные страницы</h1><ul>' >> public/index.html
 
-          for f in html/*.html; do
+          for f in public/*.html; do
             if [ "$(basename "$f")" != "index.html" ]; then
               TITLE=$(grep -oPm1 '(?<=<title>)[^<]+' "$f" || basename "$f")
-              echo "<li><a href=\"$(basename "$f")\">$TITLE</a></li>" >> html/index.html
+              echo "<li><a href=\"$(basename "$f")\">$TITLE</a></li>" >> public/index.html
             fi
           done
 
-          echo '</ul></body></html>' >> html/index.html
+          echo '</ul></body></html>' >> public/index.html
 
-      - name: Commit generated HTML
+      - name: Commit generated files
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add html/
-          git commit -m "Автогенерация HTML из Markdown" || echo "No changes"
+          git add public/
+          git commit -m "Автогенерация HTML + Markdown" || echo "No changes"
           git push
 
       - name: Setup Pages
@@ -60,7 +71,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./html
+          path: ./public
 
       - name: Deploy to GitHub Pages
         id: deployment
