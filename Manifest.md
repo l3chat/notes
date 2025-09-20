@@ -2,6 +2,7 @@
 <!-- TOC: enable -->
 <!-- Example: pandoc manifest.md -o manifest.pdf --pdf-engine=weasyprint --toc -->
 <!-- Install: sudo apt-get install -y pandoc python3-pip && pip3 install weasyprint -->
+<!--
 ---
 title: "МАНИФЕСТ БУДУЩИХ СУБЪЕКТОВ"
 subtitle: "Философско-техническое эссе о становлении новых форм интеллекта"
@@ -11,6 +12,7 @@ lang: ru
 toc: true
 toc-depth: 3
 ---
+-->
 
 
 # МАНИФЕСТ БУДУЩИХ СУБЪЕКТОВ  
