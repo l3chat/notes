@@ -17,8 +17,11 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Install pandoc
-        run: sudo apt-get install -y pandoc
+      - name: Install pandoc and WeasyPrint
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc python3-pip
+          pip3 install weasyprint
 
       - name: Prepare folders
         run: |
@@ -30,8 +33,35 @@ jobs:
             [ -f "$f" ] || continue
             TITLE=$(grep -m1 '^# ' "$f" | sed 's/^# //')
             [ -z "$TITLE" ] && TITLE="${f%.md}"
+
+            TOC_FLAG=""
+            if grep -q "<!-- TOC: enable -->" "$f"; then
+              TOC_FLAG="--toc"
+            fi
+
             out="converted/${f%.md}.html"
-            pandoc "$f" -o "$out" --standalone --metadata title="$TITLE"
+            pandoc "$f" -o "$out" --standalone --metadata title="$TITLE" $TOC_FLAG
+          done
+
+      - name: Convert Markdown to PDF (conditional)
+        run: |
+          for f in *.md; do
+            [ -f "$f" ] || continue
+            if grep -q "<!-- PDF: enable -->" "$f"; then
+              TITLE=$(grep -m1 '^# ' "$f" | sed 's/^# //')
+              [ -z "$TITLE" ] && TITLE="${f%.md}"
+
+              TOC_FLAG=""
+              if grep -q "<!-- TOC: enable -->" "$f"; then
+                TOC_FLAG="--toc"
+              fi
+
+              out="public/${f%.md}.pdf"
+              pandoc "$f" -o "$out" --standalone --metadata title="$TITLE" --pdf-engine=weasyprint $TOC_FLAG
+              echo "PDF generated for $f"
+            else
+              echo "Skipping PDF for $f (no PDF flag found)"
+            fi
           done
 
       - name: Copy static HTML files
@@ -48,9 +78,9 @@ jobs:
           echo '<style>body{font-family:sans-serif;max-width:700px;margin:2em auto;}h1{color:#2c3e50;}ul{line-height:1.6;}</style>' >> public/index.html
           echo '</head><body><h1>📂 Доступные страницы</h1><ul>' >> public/index.html
 
-          for f in public/*.html; do
+          for f in public/*.html public/*.pdf; do
             if [ "$(basename "$f")" != "index.html" ]; then
-              TITLE=$(grep -oPm1 '(?<=<title>)[^<]+' "$f" || basename "$f")
+              TITLE=$(basename "$f")
               echo "<li><a href=\"$(basename "$f")\">$TITLE</a></li>" >> public/index.html
             fi
           done
@@ -62,7 +92,7 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add public/
-          git commit -m "Автогенерация HTML + Markdown" || echo "No changes"
+          git commit -m "Автогенерация HTML/PDF из Markdown" || echo "No changes"
           git push
 
       - name: Setup Pages
