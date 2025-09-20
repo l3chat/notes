@@ -31,7 +31,8 @@ jobs:
         run: |
           for f in *.md; do
             [ -f "$f" ] || continue
-            TITLE=$(grep -m1 '^# ' "$f" | sed 's/^# //')
+            # TITLE=$(grep -m1 '^# ' "$f" | sed 's/^# //')
+            TITLE=$(awk '/^#/ { sub(/^#+[ \t]*/, ""); print; exit }' "$f")
             [ -z "$TITLE" ] && TITLE="${f%.md}"
 
             TOC_FLAG=""
@@ -48,7 +49,8 @@ jobs:
           for f in *.md; do
             [ -f "$f" ] || continue
             if grep -q "<!-- PDF: enable -->" "$f"; then
-              TITLE=$(grep -m1 '^# ' "$f" | sed 's/^# //')
+              # TITLE=$(grep -m1 '^# ' "$f" | sed 's/^# //')
+              TITLE=$(awk '/^#/ { sub(/^#+[ \t]*/, ""); print; exit }' "$f")
               [ -z "$TITLE" ] && TITLE="${f%.md}"
 
               TOC_FLAG=""
