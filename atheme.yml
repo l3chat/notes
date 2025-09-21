@@ -1,0 +1,55 @@
+extends: default
+
+# Размер страницы
+page:
+  size: A5
+  margin: [20mm, 15mm, 20mm, 15mm]  # верх, право, низ, лево
+
+# Основной шрифт
+font:
+  catalog:
+    merge: false
+    NotoSerif:
+      normal: notoserif-normal.ttf
+      italic: notoserif-italic.ttf
+      bold: notoserif-bold.ttf
+      bold_italic: notoserif-bold_italic.ttf
+  fallbacks: [NotoSerif]
+  base:
+    family: NotoSerif
+    size: 11
+
+# Заголовки
+heading:
+  font_family: NotoSerif
+  h1:
+    size: 18
+    style: bold
+    align: center
+    margin_bottom: 12
+  h2:
+    size: 14
+    style: bold
+    margin_top: 16
+    margin_bottom: 8
+  h3:
+    size: 12
+    style: italic
+    margin_top: 12
+    margin_bottom: 6
+
+# Колонтитулы
+footer:
+  recto:
+    right:
+      content: '{page-number}'
+  verso:
+    left:
+      content: '{page-number}'
+
+# Оглавление
+toc:
+  title:
+    font_size: 16
+    align: center
+  indent: 10
